@@ -1,0 +1,159 @@
+package cucumber_steps;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.JavascriptExecutor;
+
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.Select;
+
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+
+public class Trivago  {
+	public ChromeDriver driver;
+	public JavascriptExecutor js;
+	public Actions mouseOver;
+	
+	
+	@Given("launch into Trivago application")
+	public void launch_Into_Trivago_Application() {
+	    System.setProperty("webdriver.chrome.driver","./drivers/chromedriver.exe");
+	    driver = new ChromeDriver();
+	    driver.get("https://www.trivago.com/");
+	    driver.manage().window().maximize();
+	    driver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
+	}
+
+	@Given("Type Agra in destination and select Agra, Uttar Pradesh.")
+	public void type_Agra_In_Destination_And_Select_Agra_UttarPradesh() {
+	   driver.findElementByXPath("//input[@id='querytext']").sendKeys("Agra");
+	   driver.findElementByXPath("//span[text()='City - Uttar Pradesh, India']").click();
+	}
+
+	@Given("Choose June 15 as check in and June 30 as check out")
+	public void choose_June15_As_CheckIn_And_JUne30_As_CheckOut() throws InterruptedException {
+	    js =(JavascriptExecutor)driver;
+	    js.executeScript("window.scrollBy(0,300)");
+	    
+	   //driver.findElementByXPath("//button[@data-qa='calendar-checkin']").click();
+	    Thread.sleep(10000);
+	    driver.findElementByXPath("//time[@datetime='2020-06-15']").click();
+	    Thread.sleep(1000);
+		driver.findElementByXPath("//time[@datetime='2020-06-30']").click();
+	}
+
+	@Given("Select Room as Family Room")
+	public void select_Room_As_Family_Room() throws InterruptedException {
+		Thread.sleep(10000);
+	    driver.findElementByXPath("//span[text()='Family rooms']").click();	   
+	}
+
+	@Given("Choose Number of Adults 2, Childern 1 and set Child's Age as 4")
+	public void choose_Number_Of_Adults_Childern_And_Set_ChildS_Age_As() {
+	    Select adult=new Select(driver.findElementByXPath("(//select[@class='df-select'])[1]"));
+	    adult.selectByValue("2");
+	 //   WebElement children = driver.findElementByXPath("(//select[@class='df-select'])[2]");
+	    Select children1 =new Select(driver.findElementByXPath("(//select[@class='df-select'])[2]"));
+	    children1.selectByValue("2");
+	   // WebElement childage1=driver.findElementByXPath("(//select[@class='df-select js-select-child-age'])[1]");
+	    Select age1=new Select(driver.findElementByXPath("(//select[@class='df-select js-select-child-age'])[1]"));
+	    age1.selectByValue("4");
+	   // WebElement childage2=driver.findElementByXPath("(//select[@class='df-select js-select-child-age'])[2]");
+	    Select age2=new Select(driver.findElementByXPath("(//select[@class='df-select js-select-child-age'])[2]"));
+	    age2.selectByValue("4");
+	   
+	}
+
+	@Given("Click Confirm button and click Search")
+	public void click_Confirm_Button_And_Click_Search() {
+	   driver.findElementByXPath("//span[text()='Confirm']").click();
+	   driver.findElementByXPath("//span[text()='Search']").click();
+	 
+	}
+
+	@Given("Select Accommodation type as Hotels only and choose 4 stars")
+	public void select_Accommodation_Type_As_Hotels_Only_And_Choose_Stars() throws InterruptedException {
+	    mouseOver=new Actions(driver);
+	    Thread.sleep(10000);
+	    mouseOver.moveToElement(driver.findElementByXPath("//strong[text()='Accommodation']")).perform();
+	    driver.findElementByXPath("//label[text()='Hotels only']").click();
+	    driver.findElementByXPath("//button[@title='4-star hotels']").click();
+	    driver.findElementByXPath("//button[text()='Done']").click();
+	   
+	  }
+
+	@Given("Select Guest rating as Very Good")
+	public void select_GuestRating_As_VeryGood() {
+		mouseOver.moveToElement(driver.findElementByXPath("//strong[text()='Guest rating']")).perform();
+	    driver.findElementByXPath("//span[text()='Very good']").click();
+	  
+	}
+
+	@Given("Set Hotel Location as Agra Fort and click Done")
+	public void set_HotelLocation_As_AgraFort_And_Click_Done() {
+		mouseOver.moveToElement(driver.findElementByXPath("//strong[text()='Hotel location']")).perform();
+		Select hotelLocation = new Select(driver.findElementByXPath("//select[@id='pois']"));
+		hotelLocation.selectByVisibleText("Agra Fort");
+		driver.findElementByXPath("//button[text()='Done']").click();
+
+		
+	}
+
+	@Given("In more Filters, select Air conditioning, Restaurant and WiFi and click Done")
+	public void in_MoreFilters_Select_AirConditioning_Restaurant_And_WiFi_And_Click_Done() {
+		mouseOver.moveToElement(driver.findElementByXPath("//strong[text()='More filters']")).perform();
+		driver.findElementByXPath("//label[text()='Air conditioning']").click();
+		driver.findElementByXPath("//label[text()='Restaurant']").click();
+		driver.findElementByXPath("//label[text()='WiFi']").click();
+		driver.findElementByXPath("//button[text()='Done']").click();	
+	}
+
+	@Given("Sort the result as Rating & Recommended")
+	public void sort_The_Result_As_Rating_Recommended() {
+	    Select sort = new Select(driver.findElementByXPath("//select[@title='Sort by']"));
+	    sort.selectByVisibleText("Rating & Recommended");
+	}
+
+	@Given("Print the Hotel name, Rating, Number of Reviews and Click View Deal")
+	public void print_The_HotelName_Rating_Number_Of_Reviews_And_Click_ViewDeal() {
+	    System.out.println("Hotel Name:"+driver.findElementByXPath("(//span[@Class='item-link name__copytext'])[1]").getText());
+	    System.out.println("Rating:"+driver.findElementByXPath("(//div[@class='stars-wrp'])[1]/meta").getAttribute("content"));
+	    System.out.println("No.of.Reviews:"+driver.findElementByXPath("//span[contains(text(),'reviews')]").getText());
+	    driver.findElementByXPath("(//span[text()='View Deal'])[1]").click();
+	    
+	}
+
+	@Given("Print the URL of the Page")
+	public void print_TheURL_Of_The_Page() {
+		Set<String> winset = driver.getWindowHandles();
+		List<String> winList = new ArrayList<String>(winset);
+		driver.switchTo().window(winList.get(1));
+		System.out.println("URL:"+driver.getCurrentUrl());
+		 
+	}
+
+	@Given("Print the Price of the Room and click Choose Your Room")
+	public void print_The_Price_Of_The_Room_And_Click_Choose_Your_Room() {
+		System.out.println("Price Of the Room:"+driver.findElementByXPath("(//span[@class='bui-u-sr-only'])[2]").getText().replaceAll("[a-zA-z]",""));
+		driver.findElementByXPath("(//span[@class='bui-button__text'])[1]").click();
+	
+	}
+
+	@When("Click Reserve and I'll Reserve")
+	public void clickReserveAndILlReserve() {
+	    driver.findElementByXPath("(//span[@class='bui-button__text'])[1]").click();
+	    driver.findElementByXPath("(//span[@class='bui-button__text'])[11]").click();
+	    
+	}
+	    @Then("Close the browser")
+		public void closeTheBrowser() {
+					driver.quit();
+		}
+
+}

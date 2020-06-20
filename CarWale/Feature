@@ -1,0 +1,18 @@
+Feature: CarWale TestCase[TC_001]
+
+Scenario: Lowest KM Run Car
+
+Given Lauch the CarWale Application
+And Click on used
+And Select the city as Chennai
+And Select budget min 8L amd max 12L and Click search
+And Select Cars with photos only show cars with
+And Select Manufacturer as Hyndai --> Creta
+And Select Fuel type as Petrol
+And Select BEst Match as KM: low to high
+And Validate the cars are listed with Kms Low to High and Add the Least KM run car to WishList
+And Go to wishlist and Click on More Details
+When Print all the details under overview in the sameway as displayed 
+Then Close the browser
+
+

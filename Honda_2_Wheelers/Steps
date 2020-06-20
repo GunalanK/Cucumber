@@ -1,0 +1,196 @@
+package honda_steps;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.support.ui.Select;
+
+import com.google.common.collect.MapDifference;
+import com.google.common.collect.MapDifference.ValueDifference;
+import com.google.common.collect.Maps;
+
+import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
+import cucumber.api.java.en.When;
+
+public class Honda_Steps {
+	
+	public RemoteWebDriver driver;
+	public Actions action;
+	public Map<String,String> activa;
+	public Map<String,String> dio;
+	public MapDifference<String,String> diff;
+	public JavascriptExecutor js;
+	
+	@Given("Launch into Honda 2wheelers india Application")
+	public void launch_Into_Honda_Wheelers_India_Application() {
+		System.setProperty("webdriver.chrome.driver","./drivers/chromedriver.exe");
+	    driver = new ChromeDriver();
+	    driver.get("https://www.honda2wheelersindia.com/");
+	    driver.manage().window().maximize();
+	    driver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
+	}
+
+	@Given("Click on scooters and click dio")
+	public void click_On_Scooters_And_Click_Dio() throws InterruptedException {
+		try
+		{
+			driver.findElementByXPath("(//button[@class='close'])").click();
+		}
+		catch(Exception e)
+		{}
+		driver.findElementByXPath("(//a[text()='Scooter'])[1]").click();
+		Thread.sleep(10000);
+		driver.findElementByXPath("(//img[@src='/assets/images/thumb/dioBS6-icon.png'])").click();
+		
+
+	}
+
+	@Given("Click on Specifications and mouseover on Engine")
+	public void click_On_Specifications_And_Mouseover_On_Engine() throws InterruptedException {
+		driver.findElementByXPath("(//a[text()='Specifications'])").click();
+		Thread.sleep(1000);
+		action =new Actions(driver);
+		action.moveToElement(driver.findElementByXPath("//a[text()='ENGINE']")).perform();
+	}
+
+	@Given("Put all the details as key and value into Map")
+	public void put_All_The_Details_As_Key_And_Value_Into_Map() {
+		List <WebElement> dioDetails=driver.findElementsByXPath("(//span[text()='Engine']//parent::li)//following-sibling::li");
+		dio=new LinkedHashMap<String,String>();
+		for (int i = 1; i <= dioDetails.size(); i++) {
+			String dioDetail1=driver.findElementByXPath("((//span[text()='Engine']//parent::li)//following-sibling::li["+i+"]/span[1])").getText();
+			String dioDetail2=driver.findElementByXPath("((//span[text()='Engine']//parent::li)//following-sibling::li["+i+"]/span[2])").getText();
+			dio.put(dioDetail1, dioDetail2);
+		}
+		for (Entry<String,String> each : dio.entrySet()) {
+			System.out.println(each.getKey()+"------->__"+each.getValue());
+		}
+			}
+
+	@Given("Go to Scooters and click Activa 125")
+	public void go_To_Scooters_And_Click_Activa() {
+		driver.findElementByXPath("(//a[text()='Scooter'])[1]").click();
+		driver.findElementByXPath("//img[@src='/assets/images/thumb/activa-125new-icon.png']").click();
+	}
+
+	@Given("Put All its Engine Specification into another Map same as like dio")
+	public void put_All_Its_Engine_Specification_Into_Another_Map_Same_As_Like_Dio() {
+		driver.findElementByXPath("(//a[text()='Specifications'])").click();
+		action.moveToElement(driver.findElementByXPath("//a[text()='ENGINE']")).perform();
+		List <WebElement> activaDetails=driver.findElementsByXPath("(//span[text()='ENGINE']//parent::li)//following-sibling::li");
+		activa=new LinkedHashMap<String,String>();
+		for (int i = 1; i <= activaDetails.size(); i++) {
+			String activaDetail1=driver.findElementByXPath("((//span[text()='ENGINE']//parent::li)//following-sibling::li["+i+"]/span[1])").getText();
+			String activaDetail2=driver.findElementByXPath("((//span[text()='ENGINE']//parent::li)//following-sibling::li["+i+"]/span[2])").getText();
+			activa.put(activaDetail1,activaDetail2);
+		}
+		for (Entry<String,String> each : activa.entrySet()) {
+			System.out.println("<------ACTIVA 125-------->");
+			System.out.println(each.getKey()+"------->__"+each.getValue());
+		}
+			}
+	
+
+	@Given("Compare Dio and Activa Maps and print the different values of the samekeys.")
+	public void compare_Dio_And_Activa_Maps_And_Print_The_Different_Values_Of_The_Samekeys() {
+	    diff=Maps.difference(dio, activa);
+	    Map<String,ValueDifference<String>> entiresDiffering=diff.entriesDiffering();
+	    for (Entry<String, ValueDifference<String>> i:entiresDiffering.entrySet()) {
+			System.out.println("The Different value of Dio and Activa 125");
+			System.out.println(i.getKey()+"---------->"+i.getValue());
+		}
+	}
+
+	@Given("Click FAQ from Menu and Click dio under Browse By Product")
+	public void click_FAQ_From_Menu_And_Click_Dio_Under_Browse_By_Product() {
+		driver.findElementByXPath("(//a[text()='FAQ'])[1]").click();
+		driver.findElementByXPath("//a[text()='Dio BS-VI']").click();
+	}
+
+	@Given("Click  Vehicle Price and Select scooter, Dio BS-VI from the dropdown and click submit")
+	public void click_Vehicle_Price_And_Select_Scooter_Dio_BS_VI_From_The_Dropdown_And_Click_Submit() {
+		driver.findElementByXPath("(//a[@href='#6a'])/i").click();
+		/*js=(JavascriptExecutor) driver;
+		js.executeAsyncScript("window.scrollBy(0,500)");*/
+		Select vehiclePrice = new Select(driver.findElementByXPath("(//select[@name='ModelID'])[6]"));
+		vehiclePrice.selectByVisibleText("Dio BS-VI");
+		driver.findElementByXPath("(//button[text()='Submit'])[6]").click();
+		
+	   
+	}
+
+	@Given("click the price link,  Go to the new Window and select the state, city")
+	public void click_The_Price_Link_Go_To_The_New_Window_And_Select_The_State_City() {
+	    driver.findElementByXPath("//a[text()='Click here to know the price of Dio BS-VI.']").click();
+	    Set<String> windowSet = driver.getWindowHandles();
+	    List<String> windowList =new ArrayList<String>(windowSet);
+	    driver.switchTo().window(windowList.get(1));
+	    Select state=new Select(driver.findElementByXPath("//select[@id='StateID']"));
+	    state.selectByVisibleText("Tamil Nadu");
+	    Select city=new Select(driver.findElementByXPath("//select[@id='CityID']"));
+	    city.selectByVisibleText("Chennai");
+	    driver.findElementByXPath("//button[text()='Search']").click();
+	}
+
+	@Given("Print the price and model")
+	public void print_The_Price_And_Model() {
+		Map<String,String> modelMap=new LinkedHashMap<String,String>();
+		List<WebElement> modelsPrice=driver.findElementsByXPath("((//table[@id='gvshow'])//td[contains(text(),'DIO')])");
+		for (int i = 0; i < modelsPrice.size(); i++) {
+			String model=modelsPrice.get(i).getText();
+			String price=driver.findElementByXPath("((//table[@id='gvshow'])//td[contains(text(),'DIO')]/following-sibling::td)['"+(i+1)+"']").getText();
+		    modelMap.put(model,price) ;
+		}
+		for (Entry<String,String> i : modelMap.entrySet()) {
+			System.out.println("Product Name:"+i.getKey()+ "Product price"+i.getValue());
+		}
+	}
+
+	@Given("Click Product Enquiry and Fill all the * field except Mobile, check the terms and conditions box and click submit")
+	public void click_Product_Enquiry_And_Fill_All_The_Field_Except_Mobile_Check_The_Terms_And_Conditions_Box_And_Click_Submit() {
+	   driver.findElementByXPath("//span[text()='Product Enquiry ']").click();
+	   Select model=new Select(driver.findElementByXPath("//select[@id='ModelID']"));
+	   model.selectByVisibleText("Dio BS-VI");
+	   Select state=new Select(driver.findElementById("StateID"));
+	   state.selectByVisibleText("Tamil Nadu");
+	   Select city=new Select(driver.findElementById("CityID"));
+	   city.selectByVisibleText("Chennai");
+
+	   Select name1=new Select(driver.findElementById("TitleID"));
+	   name1.selectByVisibleText("Mr.");
+	   driver.findElementByXPath("//input[@id='Name']").sendKeys("Gunalan");
+	   driver.findElementByXPath("//input[@id='Email']").sendKeys("a@gmail.com");
+	   driver.findElementByXPath("//input[@id='TermsAndConditions']").click();
+	   driver.findElementById("submit").click();
+	}
+
+	@When("Verify the error message under the mobile number field.")
+	public void verify_The_Error_Message_Under_The_Mobile_Number_Field() {
+		String warningMsg=driver.findElementByXPath("//span[@for='MobileNo']").getText();
+	    if (warningMsg.equalsIgnoreCase("Please enter mobile no.")) {
+			System.out.println("Warning message is displayed");
+		}
+	    else
+	    {
+	    	System.out.println("Warning message is not displayed");
+	    }
+	}
+
+	@Then("Close the Browser")
+	public void closeTheBrowser() {
+	    driver.quit();
+
+
+}
+}
